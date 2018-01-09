@@ -1,0 +1,373 @@
+"","question2"
+"1","<p>
+      You and your partner can each make ONE selection from the following list of hints. Use this information to provide your answer in the box below.
+    </p>"
+"2","<p style=""display:inline""><b><i> x </i></b>  =
+    <numericalresponse inline=""1"" answer=""36""><textline inline=""1""><responseparam type=""tolerance"" default=""0%""/></textline><hintgroup hintfn=""hintfn1""/></numericalresponse>
+  </p>"
+"3","<p>
+    You can make TWO selections from the following list of hints. Use this information to provide your answer in the box below.
+  </p>"
+"4","<p style=""display:inline""><b><i> x </i></b>  =
+    <numericalresponse inline=""1"" answer=""36""><textline inline=""1""><responseparam type=""tolerance"" default=""0%""/></textline><hintgroup hintfn=""hintfn1""/></numericalresponse>
+  </p>"
+"5","<p> If each whole number from 1 through 10 is multiplied by 13, how many of the resulting numbers will be even? </p>"
+"6","<p> If each whole number from 1 through 10 is multiplied by 13, how many of the resulting numbers will be even? </p>"
+"7","<p> According to the graph above, the temperature at 10 a.m. is approximately how many degrees greater than the temperature at 8 a.m.?</p>"
+"8","<p> According to the graph above, the temperature at 10 a.m. is approximately how many degrees greater than the temperature at 8 a.m.?</p>"
+"9","<p>If <i>x</i> = -4, the value of -4<i>x</i> is: </p>"
+"10","<p>If <i>x</i> = -4, the value of -4<i>x</i> is: </p>"
+"11","<p style=""display:inline"">
+  <numericalresponse inline=""1"" answer=""110"">
+    <textline inline=""1"">
+      <responseparam type=""tolerance"" default=""0%""/>
+    </textline>
+    <hintgroup hintfn=""hintfn1""/>
+  </numericalresponse>
+</p>"
+"12","<p style=""display:inline"">
+  <numericalresponse inline=""1"" answer=""110"">
+    <textline inline=""1"">
+      <responseparam type=""tolerance"" default=""0%""/>
+    </textline>
+    <hintgroup hintfn=""hintfn1""/>
+  </numericalresponse>
+</p>"
+"13","<p style=""display:inline""> Probability that Mary draws a chip with an even number =
+	 <numericalresponse inline=""1"" answer=""4/9""><textline inline=""1""><responseparam type=""tolerance"" default=""1""/></textline><hintgroup hintfn=""hintfn1""/></numericalresponse>
+ </p>"
+"14","<p style=""display:inline""> Probability that Mary draws a chip with an even number =
+	 <numericalresponse inline=""1"" answer=""4/9""><textline inline=""1""><responseparam type=""tolerance"" default=""1""/></textline><hintgroup hintfn=""hintfn1""/></numericalresponse>
+ </p>"
+"15","<p style=""display:inline""> Probability that Mary draws a chip with an even number =
+	 <numericalresponse inline=""1"" answer=""4/9""><textline inline=""1""><responseparam type=""tolerance"" default=""1""/></textline><hintgroup hintfn=""hintfn1""/></numericalresponse>
+	</p>"
+"16","<p>
+		Easy Ride Van Company finds that about 40 percent of the time a person who makes an advance reservation for transportation does not keep the reservation. Therefore, for each of their 10-passenger vans, the Easy Ride Van Company schedules 13 persons on the basis of advance reservations.
+	</p>"
+"17","<p>
+		Easy Ride Van Company finds that about 40 percent of the time a person who makes an advance reservation for transportation does not keep the reservation. Therefore, for each of their 10-passenger vans, the Easy Ride Van Company schedules 13 persons on the basis of advance reservations.
+	</p>"
+"18","<center>
+  <img width=""70%"" src=""/static/030EN_M.jpeg""/>
+</center>"
+"19","<center>
+  <img width=""70%"" src=""/static/030EN_M.jpeg""/>
+</center>"
+"20","<center>
+  <img width=""70%"" src=""/static/030EN_M.jpeg""/>
+</center>"
+"21","<p>
+ 	According to the graph above, about how many students chose skiing as their favorite winter sport?
+ </p>"
+"22","<p>
+ 	According to the graph above, about how many students chose skiing as their favorite winter sport?
+ </p>"
+"23","<p>
+		If the following equality holds, then what is the value of \(n\) ?
+	</p>"
+"24","<p>
+		If the following equality holds, then what is the value of \(n\) ?
+	</p>"
+"25","<p>
+  <center>
+    <img src=""/static/3501.JPG""/>
+  </center>
+</p>"
+"26","<p>
+  <center>
+    <img src=""/static/3501.JPG""/>
+  </center>
+</p>"
+"27","<p>
+    The first four terms in a sequence are shown below.
+  </p>"
+"28","<p>
+    The first four terms in a sequence are shown below.
+  </p>"
+"29","<p>
+		The cost to mail a first-class letter is 33 cents for the first ounce. Each additional ounce costs 22 cents. (Fractions of an ounce are rounded up to the next whole ounce.)
+	</p>"
+"30","<p>
+		The cost to mail a first-class letter is 33 cents for the first ounce. Each additional ounce costs 22 cents. (Fractions of an ounce are rounded up to the next whole ounce.)
+	</p>"
+"31","<p>
+  <center>
+    <img src=""/static/3539.JPG""/>
+  </center>
+</p>"
+"32","<p>
+  <center>
+    <img src=""/static/3539.JPG""/>
+  </center>
+</p>"
+"33","<p>If a 2 by 18 rectangle has the same area as a square, what is the length of a side of the square?</p>"
+"34","<p>If a 2 by 18 rectangle has the same area as a square, what is the length of a side of the square?</p>"
+"35","<p>
+		If the digit in the tens place of 37,241 is increased by one and the digit in the thousands place is decreased by one, how has the number been changed? For example, if the number has increased by 5, enter the value 5; if the number has decreased by 5, enter the value -5.
+	</p>"
+"36","<p>
+		If the digit in the tens place of 37,241 is increased by one and the digit in the thousands place is decreased by one, how has the number been changed? For example, if the number has increased by 5, enter the value 5; if the number has decreased by 5, enter the value -5.
+	</p>"
+"37","<p>
+		It takes 64 identical cubes to <u>half</u> fill a rectangular box. If each cube has a volume of 8 cubic centimeters, what is the volume of the box in cubic centimeters?
+	</p>"
+"38","<p>
+		It takes 64 identical cubes to <u>half</u> fill a rectangular box. If each cube has a volume of 8 cubic centimeters, what is the volume of the box in cubic centimeters?
+	</p>"
+"39","<numericalresponse inline=""1"" answer=""8"">
+  <textline inline=""1"">
+    <responseparam type=""tolerance"" default=""0%""/>
+  </textline>
+  <hintgroup hintfn=""hintfn1""/>
+</numericalresponse>"
+"40","<numericalresponse inline=""1"" answer=""8"">
+  <textline inline=""1"">
+    <responseparam type=""tolerance"" default=""0%""/>
+  </textline>
+  <hintgroup hintfn=""hintfn1""/>
+</numericalresponse>"
+"41","<p>  </p>"
+"42","<p>  </p>"
+"43","<p/>"
+"44","<p>
+    If a puppy selected at random from the group is brown, what is the probability it is a male?
+  </p>"
+"45","<script type=""text/javascript"">
+	 (function() {
+		$( "".check-label"" ).text(""Submit"");
+	 })();
+	</script>"
+"46","<p>
+    If a puppy selected at random from the group is brown, what is the probability it is a male?
+  </p>"
+"47","<script type=""text/javascript"">
+	 (function() {
+		$( "".check-label"" ).text(""Submit"");
+	 })();
+	</script>"
+"48","<p>
+		In the solution of the system of equations above, what is the value of \(x\) ?
+	</p>"
+"49","<p>
+		In the solution of the system of equations above, what is the value of \(x\) ?
+	</p>"
+"50","<p>The town of Mayville taxes property at a rate of $42 for each $1,000 of estimated value. What is the estimated value, in dollars, of a property on which the owner owes $5,250 in property tax?</p>"
+"51","<p>The town of Mayville taxes property at a rate of $42 for each $1,000 of estimated value. What is the estimated value, in dollars, of a property on which the owner owes $5,250 in property tax?</p>"
+"52","<p>
+    NOTE: Enter your Numerical Response in centimeters. <i>MN</i> is chosen by your collaboration partner.
+  </p>"
+"53","<p>
+    NOTE: Enter your Numerical Response in centimeters. <i>PQ</i> is chosen by your collaboration partner.
+  </p>"
+"54","<p>
+      NOTE: Enter your Numerical Responses in centimeters.
+  </p>"
+"55","<p>
+		A fair coin is to be tossed three times. What is the probability that 2 heads and 1 tail in any order will come up?
+	</p>"
+"56","<p>
+		A fair coin is to be tossed three times. What is the probability that 2 heads and 1 tail in any order will come up?
+	</p>"
+"57","<p>What is the diagonal measurement, in inches, of the TV screen shown in the figure above?</p>"
+"58","<p>What is the diagonal measurement, in inches, of the TV screen shown in the figure above?</p>"
+"59","<p>
+    NOTE: The incercept is chosen by your collaboraion partner.
+  </p>"
+"60","<p>
+    NOTE: The slope is chosen by your collaboraion partner.
+  </p>"
+"61","<p style=""display:inline""> slope =
+    <numericalresponse inline=""1"" answer=""0""><textline inline=""1""><responseparam type=""tolerance"" default=""1""/></textline><hintgroup hintfn=""hintfn1""/></numericalresponse>
+  </p>"
+"62","<p>According to the box-and-whisker plot above, three-fourths of the cars made by Company <i>X</i> got fewer than how many miles per gallon?</p>"
+"63","<p>According to the box-and-whisker plot above, three-fourths of the cars made by Company <i>X</i> got fewer than how many miles per gallon?</p>"
+"64","<p>
+		The postal rate is $0.25 for the first ounce and $0.20 for each additional ounce or part of an ounce. How many dollars would it cost to mail a package that weighs 6.8 ounces?
+	</p>"
+"65","<p>
+		The postal rate is $0.25 for the first ounce and $0.20 for each additional ounce or part of an ounce. How many dollars would it cost to mail a package that weighs 6.8 ounces?
+	</p>"
+"66","<numericalresponse answer=""500"">
+  <formulaequationinput label=""073""/>
+  <hintgroup hintfn=""hintfn1""/>
+</numericalresponse>"
+"67","<numericalresponse answer=""500"">
+  <formulaequationinput label=""073""/>
+  <hintgroup hintfn=""hintfn1""/>
+</numericalresponse>"
+"68","<p>What is the distance between the points (2,10) and (-4,2) in the <i>xy</i>-plane?</p>"
+"69","<p>What is the distance between the points (2,10) and (-4,2) in the <i>xy</i>-plane?</p>"
+"70","<p>In the graph above, each dot shows the number of sit-ups and the corresponding age for one of 13 people. According to this graph, what is the median number of sit-ups for these 13 people?</p>"
+"71","<p>In the graph above, each dot shows the number of sit-ups and the corresponding age for one of 13 people. According to this graph, what is the median number of sit-ups for these 13 people?</p>"
+"72","<script type=""text/javascript"">
+    (function() {
+      $( "".check-label"" ).text(""Submit"");
+    })();
+  </script>"
+"73","<script type=""text/javascript"">
+    (function() {
+      $( "".check-label"" ).text(""Submit"");
+    })();
+  </script>"
+"74","<p>
+    What is the height <i>h</i> of the building, to the nearest foot?
+  </p>"
+"75","<p style=""display:inline""><i>h</i> =
+    <numericalresponse inline=""1"" answer=""77""><textline inline=""1""><responseparam type=""tolerance"" default=""1""/>\
+      </textline><hintgroup hintfn=""hintfn1""/></numericalresponse>
+  </p>"
+"76","<p>
+    What is the height <i>h</i> of the building, to the nearest foot?
+  </p>"
+"77","<p style=""display:inline""><i>h</i> =
+    <numericalresponse inline=""1"" answer=""77""><textline inline=""1""><responseparam type=""tolerance"" default=""1""/>\
+      </textline><hintgroup hintfn=""hintfn1""/></numericalresponse>
+  </p>"
+"78","<p>
+  <center>
+    <img src=""/static/5669.jpg""/>
+  </center>
+</p>"
+"79","<p>
+  <center>
+    <img src=""/static/5669.jpg""/>
+  </center>
+</p>"
+"80","<p>
+    You and your partner can each make ONE selection from the following list of hints. Use this information to provide your answer in the box below.
+  </p>"
+"81","<p style=""display:inline""><i><b>x</b></i> =
+			<numericalresponse inline=""1"" answer=""9.6""><textline inline=""1""><responseparam type=""tolerance"" default=""1""/></textline><hintgroup hintfn=""hintfn1""/></numericalresponse>
+		</p>"
+"82","<p>
+    You can make TWO selections from the following list of hints. Use this information to provide your answer in the box below.
+  </p>"
+"83","<p style=""display:inline""><i><b>x</b></i> =
+			<numericalresponse inline=""1"" answer=""9.6""><textline inline=""1""><responseparam type=""tolerance"" default=""1""/></textline><hintgroup hintfn=""hintfn1""/></numericalresponse>
+		</p>"
+"84","<choiceresponse>
+  <checkboxgroup label="""">
+    <choice correct=""true""> length of side AG  </choice>
+    <choice correct=""true""> length of side BC  </choice>
+    <choice correct=""true""> length of side CG  </choice>
+    <choice correct=""true""> length of side DE  </choice>
+    <choice correct=""true""> length of side EF  </choice>
+    <choice correct=""true""> length of side FG  </choice>
+  </checkboxgroup>
+  <hintgroup hintfn=""hintfn1""/>
+</choiceresponse>"
+"85","<p style=""display:inline""> AB =
+      <numericalresponse inline=""1"" answer=""13.45""><textline inline=""1""><responseparam type=""tolerance"" default=""0.1""/></textline><hintgroup hintfn=""hintfn1""/></numericalresponse>
+    </p>"
+"86","<choiceresponse>
+  <checkboxgroup label="""">
+    <choice correct=""true""> length of side AG  </choice>
+    <choice correct=""true""> length of side BC  </choice>
+    <choice correct=""true""> length of side CG  </choice>
+    <choice correct=""true""> length of side DE  </choice>
+    <choice correct=""true""> length of side EF  </choice>
+    <choice correct=""true""> length of side FG  </choice>
+  </checkboxgroup>
+  <hintgroup hintfn=""hintfn1""/>
+</choiceresponse>"
+"87","<p style=""display:inline""> AB =
+      <numericalresponse inline=""1"" answer=""13.45""><textline inline=""1""><responseparam type=""tolerance"" default=""0.1""/></textline><hintgroup hintfn=""hintfn1""/></numericalresponse>
+    </p>"
+"88","<p>Semicircles are constructed on the sides of an equilateral triangle, as shown in the figure above. What is the sum of the lengths of the three darkened arcs (round to the nearest hundredth)?</p>"
+"89","<p>Semicircles are constructed on the sides of an equilateral triangle, as shown in the figure above. What is the sum of the lengths of the three darkened arcs (round to the nearest hundredth)?</p>"
+"90","<p>
+		Yvonne has studied the cost of tickets over time for her favorite sports team. She has created a model to predict the cost of a ticket in the future. Let \(C\) represent the cost of a ticket in dollars and \(y\) represent the number of years in the future. Her model is as follows:
+	</p>"
+"91","<p>
+		Yvonne has studied the cost of tickets over time for her favorite sports team. She has created a model to predict the cost of a ticket in the future. Let \(C\) represent the cost of a ticket in dollars and \(y\) represent the number of years in the future. Her model is as follows:
+	</p>"
+"92","<p>
+    What is the value of \(f(g(1))\) ?
+  </p>"
+"93","<p>
+    What is the value of \(f(g(1))\) ?
+  </p>"
+"94","<p>
+    What is the value of \(f(g(1))\) ?
+  </p>"
+"95","<p>
+		The remainder when a number <i>n</i> is divided by 7 is 2. What is the remainder when 2<i>n</i> + 1 is divided by 7?
+	</p>"
+"96","<p>
+		The remainder when a number <i>n</i> is divided by 7 is 2. What is the remainder when 2<i>n</i> + 1 is divided by 7?
+	</p>"
+"97","<p>
+  <center>
+			[mathjax] \sqrt{8} N = 3^5 [/mathjax]
+	  </center>
+</p>"
+"98","<p>
+  <center>
+			[mathjax] \sqrt{8} N = 3^5 [/mathjax]
+	  </center>
+</p>"
+"99","<p>
+    You and your partner may each make TWO selections from the following list of hints. Use this information to provide your answer in the box below.
+  </p>"
+"100","<p style=""display:inline"">  Average number of boxes =
+			<numericalresponse inline=""1"" answer=""7""><textline inline=""1""><responseparam type=""tolerance"" default=""1""/></textline><hintgroup hintfn=""hintfn1""/></numericalresponse>
+		</p>"
+"101","<p>In a school fund-raiser, 10 students in class <i>A</i> sold an average (arithmetic mean) of 4 boxes of cookies. In class <i>B</i>, 15 students sold an average of 9 boxes. What was the average number of boxes of cookies sold by the 25 students?</p>"
+"102","<p>
+    You can make FOUR selections from the following list of hints. Use this information to provide your answer in the box below.
+  </p>"
+"103","<p style=""display:inline"">  Average number of boxes =
+			<numericalresponse inline=""1"" answer=""7""><textline inline=""1""><responseparam type=""tolerance"" default=""1""/></textline><hintgroup hintfn=""hintfn1""/></numericalresponse>
+		</p>"
+"104","<p>
+	NOTE: Round your answer to nearest hundredth. <i>BC</i> is chosen by your collaboration partner.
+	</p>"
+"105","<p>
+	NOTE: Round your answer to nearest hundredth. <i>AB</i> is chosen by your collaboration partner.
+	</p>"
+"106","<p>
+	NOTE: Round your answers to nearest hundredth.
+	</p>"
+"107","<script type=""text/javascript"">
+	(function() {
+		$( "".check-label"" ).text(""Submit"");
+	})();
+</script>"
+"108","<script type=""text/javascript"">
+	(function() {
+		$( "".check-label"" ).text(""Submit"");
+	})();
+</script>"
+"109","<p> What is the average pulse rate per minute for these 100 people?</p>"
+"110","<p> What is the average pulse rate per minute for these 100 people?</p>"
+"111","<center>
+  <img width=""50%"" src=""/static/096HD_J_B.jpg""/>
+</center>"
+"112","<center>
+  <img src=""/static/3397.jpg""/>
+</center>"
+"113","<center>
+  <img src=""/static/3397.jpg""/>
+</center>"
+"114","<p/>"
+"115","<p/>"
+"116","<p/>"
+"117","<p> Your floor measures 20 feet by 42 feet. </p>"
+"118","<p> Your floor measures 25 feet by 35 feet. </p>"
+"119","<p> One house's floor measures 25 feet by 35 feet. The other house's floor measures 20 feet by 42 feet.</p>"
+"120","<p>
+    This is the collaborative part of the math test. You are expected to work together with a partner--by communicating through a chat box--on the questions in this section. After discussing the solutions, each of you must separately enter and submit your answers on your own screen. <b> Questions are graded as correct only if both you and your partner provide a correct answer. </b>
+ </p>"
+"121","<p>
+This is the individual portion of the math test.
+Please complete this part first before moving on the the collaborative part.
+We ask that you make your best effort to respond to all of the questions.
+If you do not know the answer, it is okay to guess.
+</p>"
+"122","<optionresponse show_correcntess=""never"">
+  <p>What is your gender?</p>
+  <optioninput options=""('Male', 'Female', 'Other')"" correct=""*"">
+    </optioninput>
+  <hintgroup hintfn=""hintfn1""/>
+</optionresponse>"

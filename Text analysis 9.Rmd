@@ -1,0 +1,175 @@
+---
+title: "Text Analysis 9 tf-idf"
+author: "Junyan Yao"
+date: "November 14, 2017"
+output: html_document
+---
+#load the data
+```{r, warning=FALSE}
+library(corpus)
+library(Matrix)
+library(tidytext)
+library(ggplot2)
+library(dplyr)
+data<-read.csv("~/Documents/NYU/Fall 2017/Text Analysis Project/cpsv_text_project/chat_time_series.csv")
+#data<- read.csv("C:/Users/jyao/Documents/Text Analysis/chat_time_series.csv") office comp
+data<- data[,c(2,5,8)] #extract needed columns
+
+#subset the data
+chatdata<- data[which(data$type=="chat"),] #this is what we want to look at for now
+problemdata<- data[which(data$type=="problem"),]
+
+
+#load the outcome data
+outcomedata<-read.csv("~/Documents/NYU/Fall 2017/Text Analysis Project/cpsv_text_project/group_outcomes.csv")
+#outcomedata<-read.csv("C:/Users/jyao/Documents/Text Analysis/group_outcomes.csv") #office comp
+
+
+#load the words
+
+cwords <- read_excel("~/Desktop/Text-Analysis/cwords.xlsx")
+
+
+subset1<- outcomedata[outcomedata$group_id>0,] #Get rid of all negative group_id
+summary(subset1$delta) #we have 110 groups in this dataset
+
+
+performance<-ifelse(subset1$delta>0.4058,"high",ifelse(subset1$delta< -0.481,"low","in-between")) 
+temp22<-cbind(subset1,performance) #label the performance for these groups
+
+#try to get rid of the missing rows(some group id are missing in the outcome data)
+merged_data<- merge(x=chatdata,y=temp22,by="group_id")
+
+merged_data$text<-as.character(merged_data$content)
+
+TermByGroup<- merged_data %>%
+  unnest_tokens(word, text) %>%
+  #count(group_id,word, sort = TRUE) %>%
+  #filter(!word %in% stop_words$word) %>%   #here to remove the stopwords
+  ungroup()
+
+word2<- cwords$X__1[which(cwords$x %in% TermByGroup$word)]
+
+
+
+tot<- TermByGroup %>%
+  group_by(group_id) %>%
+  summarize(total=sum(n))
+
+TermByGroup<- left_join(TermByGroup, tot)
+
+TermByGroup<- TermByGroup %>%
+  bind_tf_idf(word,group_id, n)
+head(TermByGroup)
+#sort it by TF_IDF value
+temp<- TermByGroup %>%
+  select(-total) %>%
+  arrange(desc(tf_idf))
+
+head(temp,30)
+
+
+
+```
+#weight by performance
+
+```{r, warning=FALSE}
+merged_data$text<- as.character(merged_data$content)
+TermByGroup2<- merged_data %>%
+  unnest_tokens(word, text) %>%
+  count(performance,word, sort = TRUE) %>% 
+  filter(!word %in% stop_words$word) %>%  #remove stop_words
+  ungroup()
+
+
+tot<- TermByGroup2 %>%
+  group_by(performance) %>%
+  summarize(total=sum(n))
+
+TermByGroup2<- left_join(TermByGroup2, tot)
+
+TermByGroup2<- TermByGroup2 %>%
+  bind_tf_idf(word,performance, n)
+#View(TermByGroup2)
+
+temp2<- TermByGroup2 %>%
+  select(-total) %>%
+  arrange(desc(tf_idf))
+
+head(temp2,20)
+
+#visulize the high tf-idf
+plot_idf<- TermByGroup2 %>%
+  arrange(desc(tf_idf)) %>%
+  mutate(word=factor(word, levels = rev(unique(word))))
+
+plot_idf %>%
+  top_n(20) %>%
+  ggplot(aes(word, tf_idf, fill=performance)) +
+  geom_col()+
+  labs(x=NULL, y="tf-idf") +
+  coord_flip()
+
+#visulize the high tf-idf
+plot_idf<- TermByGroup2 %>%
+  arrange(desc(tf_idf)) %>%
+  mutate(word=factor(word, levels = rev(unique(word))))
+
+plot_idf %>%
+  top_n(50) %>%
+  ggplot(aes(word, tf_idf, fill=performance)) +
+  geom_col()+
+  labs(x=NULL, y="tf-idf") +
+  coord_flip()
+
+```
+
+
+
+#create TF_IDF Matrix
+```{r}
+new<-unique(merged_data[,c(1,7)])
+TermByGroup3<- left_join(TermByGroup,new, by="group_id")
+TF_IDF_Matrix<- matrix(0, nrow=3408, ncol=110)
+rownames(TF_IDF_Matrix)<- unique(TermByGroup3$word)
+colnames(TF_IDF_Matrix)<- unique(TermByGroup3$group_id)
+unique_groups <- unique(TermByGroup3$group_id)
+for(i in c(1:length(unique_groups))){
+  tf_idfs <- subset(TermByGroup3,TermByGroup3$group_id == unique_groups[i],select=c("word","tf_idf"))
+  word_rows <- which(rownames(TF_IDF_Matrix) %in% tf_idfs$word,arr.ind = TRUE)
+  col_num <-  which(colnames(TF_IDF_Matrix) %in% unique_groups[i],arr.ind = TRUE)
+  TF_IDF_Matrix[word_rows,col_num] <- tf_idfs$tf_idf 
+}
+
+high_groups_cols <- which(colnames(TF_IDF_Matrix) %in% new$group_id[new$performance=="high"],arr.ind = TRUE)
+low_groups_cols <- which(colnames(TF_IDF_Matrix) %in% new$group_id[new$performance=="low"],arr.ind = TRUE)
+```
+chi-squared test
+```{r, warning=FALSE}
+pvalue<- rep(NA, 3408)
+for (i in 1:length(pvalue)){
+  if(length(unique(TF_IDF_Matrix[i,low_groups_cols])) > 2 & length(unique(TF_IDF_Matrix[i,high_groups_cols]))>2){
+    pvalue[i]<-chisq.test(TF_IDF_Matrix[i,low_groups_cols],TF_IDF_Matrix[i,high_groups_cols],correct = TRUE)$p.value
+  }else{
+    pvalue[i] <- NA
+  }
+}
+
+names(pvalue) <- rownames(TF_IDF_Matrix)
+pvalue <- sort(pvalue)
+
+sig<- pvalue[pvalue<0.00005]
+
+head(sig,50)
+
+```
+
+
+#why ngram=3 did not work
+
+#take group 3 for example
+```{r}
+term_stats(merged_data$content[merged_data$group_id[22]], ngrams=3)
+```
+
+#what is next??????

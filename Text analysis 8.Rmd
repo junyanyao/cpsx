@@ -1,0 +1,314 @@
+---
+title: "Text analysis"
+author: "Junyan Yao"
+output: html_document
+---
+
+Research question: Whether chat engagement is associated with test outcomes(see how students' collaborative performance can be associated with students' performance in these math problems).
+
+
+Data: Chat data and test outcome data
+```{r}
+library(corpus)
+library(Matrix)
+```
+
+Load and make the data
+```{r}
+data<-read.csv("~/Documents/NYU/Fall 2017/Text Analysis Project/cpsv_text_project/chat_time_series.csv")
+#data<- read.csv("C:/Users/jyao/Documents/Text Analysis/chat_time_series.csv") office comp
+data<- data[,c(2,5,8)] #extract needed columns
+head(data) #we have 135 groups in this dataset
+
+#subset the data
+chatdata<- data[which(data$type=="chat"),] #this is what we want to look at for now
+problemdata<- data[which(data$type=="problem"),]
+head(chatdata)
+
+#load the outcome data
+outcomedata<-read.csv("~/Documents/NYU/Fall 2017/Text Analysis Project/cpsv_text_project/group_outcomes.csv")
+#outcomedata<-read.csv("C:/Users/jyao/Documents/Text Analysis/group_outcomes.csv") #office comp
+head(outcomedata)
+
+subset1<- outcomedata[outcomedata$group_id>0,] #Get rid of all negative group_id
+summary(subset1$delta) #we have 110 groups in this dataset
+
+
+performance<-ifelse(subset1$delta>0.4058,"high",ifelse(subset1$delta< -0.481,"low","in-between")) 
+temp22<-cbind(subset1,performance) #label the performance for these groups
+head(temp22)
+
+#try to get rid of the missing rows(some group id are missing in the outcome data)
+merged_data<- merge(x=chatdata,y=temp22,by="group_id")
+head(merged_data) #only 110 groups are in this dataset
+
+```
+
+Make the data
+
+```{r}
+#split to two groups- High performance group and low performance group;
+#now we only want to compare the performance between high outcomes and low outcomes groups
+high_group<- merged_data[which(merged_data$performance=="high"),]
+low_group<- merged_data[which(merged_data$performance=="low"),]
+
+#get the most common non-punctuation, non-stop word terms in the chat
+Y<- term_stats(merged_data$content, drop=stopwords_en, drop_punct=TRUE) #the support is the number of texts containing the term.
+# by using drop= stopwords_en, we can exclude these "functional" words
+
+#We kept these functional words in the analysis
+Y_high<- term_stats(high_group$content)
+Y_low<- term_stats(low_group$content)
+
+S<- subset(Y, Y$support>5)
+S_high<-subset(Y_high,Y_high$support>5)
+S_low<-subset(Y_low,Y_low$support>5)
+head(S_high,10)
+head(S_low,10)
+
+
+#higher-order n-grams
+term_stats(merged_data$content,ngrams = 3)
+term_stats(merged_data$content,ngrams = 4)
+term_stats(merged_data$content,ngrams = 5)
+
+term_stats(high_group$content,ngrams = 4)
+term_stats(low_group$content,ngrams = 4)
+
+
+Y_high<- Y_high[,-3] #drop the support column
+Y_low<- Y_low[,-3] #drop the support column
+names(Y_high)[2]<- paste("high")
+names(Y_low)[2]<- paste("low")
+dat<- merge(Y_high,Y_low, by="term",all = TRUE) #create the dataset for High and low groups counts by terms
+dat[is.na(dat)]<- 0
+
+```
+#Don't run
+Emotion-lexicon
+```{r}
+#Emotion-Lexicon
+affect<- subset(affect_wordnet,emotion != "Neutral")
+affect$emotion<- droplevels(affect$emotion) #drop the unused neutral level
+affect$category<- droplevels(affect$category) #drop unused categories
+
+term_stats(merged_data$content, subset = term %in% affect$term)
+term_stats(high_group$content, subset = term %in% affect$term)
+term_stats(low_group$content, subset = term %in% affect$term)
+
+
+text_sample(high_group$content,"hard")
+text_sample(low_group$content,"hard")
+#term emotion matrix
+#segment the text into smaller chunks and then compute the emotion occurence rates in each chunk, broken down by category ("positive","negative","ambiguous")
+
+term_score<- with(affect, unclass(table(term,emotion))) 
+head(term_score) #while not very informative
+```
+
+
+#create 2 by 2 tables for each term in the chat
+
+The outcome X are 2666 2*2 matrix. Each matrix is a 2 * 2 table for each term.
+
+```{r}
+
+#create 2 * 2 tables for each term
+aux<- 1:length(dat$term)
+x<- rep(list(diag(2)), 2677)
+for (i in 1:length(aux)){
+  x[[i]][1,1]<-dat$high[[i]]
+  x[[i]][2,1]<-dat$low[[i]]
+  x[[i]][1,2]<-colSums(dat[,c(2,3)])[1]-dat$high[[i]]
+  x[[i]][2,2]<-colSums(dat[,c(2,3)])[2]-dat$low[[i]]
+  colnames(x[[i]])<- c(dat$term[i], paste0("\u00ac",dat$term[i]))
+  rownames(x[[i]])<- c("high", "low")
+}
+
+#one example
+x[[2010]]
+```
+The 2010th Matrix shows the frequency of "right" term is 146 in the high performance group, and not term "right" is 26366. In the low performance group, the frequency for term "right" is 76. The ratio below this term for between high performance and low performance groups is 146/76=1.92
+
+Now we would like to explore all terms ratio between high preformance groups and low preformance groups. 
+```{r}
+ratio<- matrix(NA,nrow=2677,ncol=2)
+for (i in 1:length(x)){
+  ratio[i,1]<- colnames(x[[i]])[1] 
+  ratio[i,2]<- x[[i]][1,1]/(x[[i]][2,1]+1)#add 0.01 here to avoid infinite value
+}
+colnames(ratio)<- c("term","ratio")
+head(ratio,50)
+```
+
+Look at the distribution of ratio 
+```{r}
+hist(as.numeric(ratio[,2]),main="Ratio between high and low") #very skewed distribution
+
+Ordered_Ratio<- ratio[order(as.numeric(ratio[,2]), decreasing=TRUE),] #sort the order
+head(Ordered_Ratio,50) #the biggest 10 terms ratio
+
+#check the case "pi"
+x[[1815]]
+```
+
+
+Here are the rates between the term and the rest of terms
+
+Rates=term/non_term
+
+```{r}
+rates<- matrix(NA, nrow = 2677, ncol = 3)
+for (i in 1:length(x)){
+  rates[i,1]<-colnames(x[[i]])[1]
+  rates[i,2]<- x[[i]][1,1]/(x[[i]][1,2]) #high performance group
+  rates[i,3]<- x[[i]][2,1]/(x[[i]][2,2]) #low performance group
+}
+colnames(rates)<- c("term","high","low")
+```
+
+look at the rates distribution
+
+```{r}
+par(mfrow=c(1,2))
+hist(as.numeric(rates[,2]), main="High performance")
+hist(as.numeric(rates[,3]), main="Low performance")
+Ordered_Rates_high<- rates[order(as.numeric(rates[,2]), decreasing=TRUE),]
+Ordered_Rates_low<- rates[order(as.numeric(rates[,3]), decreasing=TRUE),]
+
+
+head(Ordered_Rates_high,20)
+head(Ordered_Rates_low,20)
+
+```
+
+
+Try the log ratio per the gender lesson
+```{r}
+log_rates<- matrix(NA, nrow = 2677, ncol = 3)
+for (i in 1:length(x)){
+  log_rates[i,1]<-colnames(x[[i]])[1]
+  log_rates[i,2]<- log2(x[[i]][1,1]+1)/log2(x[[i]][1,2]) #high
+  log_rates[i,3]<- log2(x[[i]][2,1]+1)/log2(x[[i]][2,2]) #low
+}
+```
+
+Here are a histogram and normal probability plot of the estimates for both high performance groups and low performance groups
+```{r}
+par(mfrow=c(2,2))
+hist(as.numeric(log_rates[,2]),main="High Performance")
+qqnorm(as.numeric(log_rates[,2]),main = "High performance")
+hist(as.numeric(log_rates[,3]),main="Low performance")
+qqnorm(as.numeric(log_rates[,3]), main="Low performance")
+```
+
+
+Some terms only apprear once in the dataset. This could be unreliable and not very informative. So we discard them
+
+```{r}
+dat$tot<- rowSums(dat[,2:3])
+dat2<- dat[which(dat$tot>1),]
+
+aux2<- 1:length(dat2$term)
+xx<- rep(list(diag(2)), 1463)
+for (i in 1:length(aux2)){
+  xx[[i]][1,1]<-dat2$high[[i]]
+  xx[[i]][2,1]<-dat2$low[[i]]
+  xx[[i]][1,2]<-colSums(dat2[,c(2,3)])[1]-dat2$high[[i]]
+  xx[[i]][2,2]<-colSums(dat2[,c(2,3)])[2]-dat2$low[[i]]
+  colnames(xx[[i]])<- c(dat2$term[i], paste0("\u00ac",dat2$term[i]))
+  rownames(xx[[i]])<- c("high", "low")
+}
+
+#ratio between the high and low
+
+ratio2<- matrix(NA,nrow=1463,ncol=2)
+for (i in 1:length(xx)){
+  ratio2[i,1]<- colnames(xx[[i]])[1] #high/low for the rest of terms
+  ratio2[i,2]<- xx[[i]][1,1]/(xx[[i]][2,1]+1)#add 0.01 here to avoid infinite value
+}
+colnames(ratio2)<- c("term","ratio")
+ordered_ratio2<-ratio2[order(ratio2[,2],decreasing=TRUE),]
+head(ordered_ratio2,50)
+
+hist(as.numeric(ratio2[,2]), main="ratio between high and low groups")
+
+
+#ratio for the term and the rest of terms
+
+rates2<- matrix(NA, nrow = 1463, ncol = 3)
+for (i in 1:length(xx)){
+  rates2[i,1]<-colnames(xx[[i]])[1]
+  rates2[i,2]<- xx[[i]][1,1]/(xx[[i]][1,2])
+  rates2[i,3]<- xx[[i]][2,1]/(xx[[i]][2,2])
+}
+colnames(rates2)<- c("term","high_rates","low_rates")
+
+#log form
+log_rates2<- matrix(NA, nrow = 1463, ncol = 3)
+for (i in 1:length(xx)){
+  log_rates2[i,1]<-colnames(xx[[i]])[1]
+  log_rates2[i,2]<- log2(xx[[i]][1,1]+1)/log2(xx[[i]][1,2])
+  log_rates2[i,3]<- log2(xx[[i]][2,1]+1)/log2(xx[[i]][2,2])
+}
+
+```
+
+Now let's view the distribution for the log ratio
+
+```{r}
+par(mfrow=c(2,2))
+hist(as.numeric(log_rates2[,2]))
+qqnorm(as.numeric(log_rates2[,2]))
+hist(as.numeric(log_rates2[,3]))
+qqnorm(as.numeric(log_rates2[,3]))
+
+#a little more approached to Normal distributed shape.
+```
+
+
+
+Uncertainty quantification
+It's hard to know which of these differences are meaningful without quantifying the error associated with the estimates. Some words are common, and we have reliable estimates of the log ratios. Other words are rare, and the estimates are based on a small number of occurrences. In the rare case, the estimates of the log ratios will be unreliable.
+
+Estimate the standard errors
+```{r}
+rates_df1<- data.frame(as.numeric(rates2[,2])) #convert to data frame
+rates_df2<- data.frame(as.numeric(rates2[,3]))
+rates_df3<- data.frame(rates2[,1])
+rates_df<- cbind(rates_df3,rates_df1,rates_df2)
+colnames(rates_df)<-c("term","high_rates","low_rates")
+
+high_se<- sqrt(rates_df$high_rates*(1-rates_df$high_rates)/ colSums(rates_df[,2:3])[1]) #a vector
+
+low_se<- sqrt(rates_df$low_rates*(1-rates_df$low_rates)/ colSums(rates_df[,2:3])[2])
+
+```
+
+To find the standard errors for the logarithms of these quantities, we use the delta method. We multiply the standard error by the absolute value of the derivative of the logarithm function evaluated at the estimate:
+
+```{r}
+log2_high_se<- abs(1/(log(2)*rates_df$high_rates))*high_se
+log2_low_se<- abs(1/(log(2)*rates_df$low_rates))*low_se
+```
+
+
+now assume log2_high_se and log2_low_se are independent.
+
+```{r}
+log2_ratio_se<- sqrt(log2_high_se^2+log2_low_se^2)
+```
+
+
+To produce a plot
+```{r}
+r<- rank(log_rates2,ties.method = "first")
+
+xlim<- xlim<- range(r)
+ylim<- range(log_rates2[,2],log_rates2[,3])
+
+```
+
+
+
+

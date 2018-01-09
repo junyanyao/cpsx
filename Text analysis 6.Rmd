@@ -1,0 +1,214 @@
+---
+title: "Text analysis 3"
+author: "Junyan Yao"
+date: "10/16/2017"
+output: html_document
+---
+
+Research question: Whether chat engagement is associated with test outcomes(see how students' collaborative performance can be associated with students' performance in these math problems).
+
+
+Data: Chat data and test outcome data
+
+
+```{r}
+library(corpus)
+library(Matrix)
+```
+
+
+
+Load and make the data
+```{r}
+data<- read.csv("~/Documents/NYU/Fall 2017/Text Analysis Project/cpsv_text_project/chat_time_series.csv")
+data<- data[,c(2,5,8)] #extract needed column
+head(data)
+
+#subset the data
+chatdata<- data[which(data$type=="chat"),] #this is what we want to look at for now
+problemdata<- data[which(data$type=="problem"),]
+head(chatdata)
+
+#load the outcome data
+outcomedata<-read.csv("~/Documents/NYU/Fall 2017/Text Analysis Project/cpsv_text_project/group_outcomes.csv") 
+head(outcomedata)
+
+subset1<- outcomedata[outcomedata$group_id>0,] #Get rid of all negative group_id
+summary(subset1$delta)
+
+performance<-ifelse(subset1$delta>0.4058,"high",ifelse(subset1$delta< -0.481,"low","in-between"))
+temp22<-cbind(subset1,performance)
+head(temp22)
+
+#try to get rid of the missing rows(some group id are missing in the outcome data)
+merged_data<- merge(x=chatdata,y=temp22,by="group_id")
+
+```
+
+Tokenlize data
+
+```{r}
+#split to two groups- High performance group and low performance group;
+high_group<- merged_data[which(merged_data$performance=="high"),]
+low_group<- merged_data[which(merged_data$performance=="low"),]
+
+#get the most common non-punctuation, non-stop word terms in the chat
+Y<- term_stats(merged_data$content, drop=stopwords_en, drop_punct=TRUE) #the support is the number of texts containing the term.
+# by using drop= stopwords_en, we can exclude these "functional" words
+
+
+Y_high<- term_stats(high_group$content)
+Y_low<- term_stats(low_group$content)
+
+S<- subset(Y, Y1$support>5)
+S_high<-subset(Y_high,Y_high$support>5)
+S_low<-subset(Y_low,Y_low$support>5)
+head(S_high,10)
+head(S_low,10)
+#probably not drop the "functional" words
+YY<- term_stats(merged_data$content)
+head(YY,10)
+YY_high<- term_stats(high_group$content)
+head(YY_high,10)
+YY_low<-term_stats(low_group$content)
+head(YY_low, 10)
+
+
+#higher-order n-grams
+term_stats(merged_data$content,ngrams = 3)
+term_stats(merged_data$content,ngrams = 4)
+term_stats(merged_data$content,ngrams = 5)
+
+term_stats(high_group$content,ngrams = 4)
+term_stats(low_group$content,ngrams = 4)
+
+
+
+```
+
+Emotion-lexicon
+```{r}
+#Emotion-Lexicon
+affect<- subset(affect_wordnet,emotion != "Neutral")
+affect$emotion<- droplevels(affect$emotion) #drop the unused neutral level
+affect$category<- droplevels(affect$category) #drop unused categories
+
+term_stats(merged_data$content, subset = term %in% affect$term)
+term_stats(high_group$content, subset = term %in% affect$term)
+term_stats(low_group$content, subset = term %in% affect$term)
+
+
+text_sample(high_group$content,"hard")
+text_sample(low_group$content,"hard")
+#term emotion matrix
+#segment the text into smaller chunks and then compute the emotion occurence rates in each chunk, broken down by category ("positive","negative","ambiguous")
+
+term_score<- with(affect, unclass(table(term,emotion))) 
+head(term_score) #while not very informative
+```
+
+
+create 2 by 2 tables for each term in the chat
+
+```{r}
+YY_high<- YY_high[,-3] #drop the support column
+YY_low<- YY_low[,-3] #drop the support column
+names(YY_high)[2]<- paste("high")
+names(YY_low)[2]<- paste("low")
+dat<- merge(YY_high,YY_low, by="term",all = TRUE)
+
+dat[is.na(dat)]<- 0
+
+
+#create 2 * 2 tables for each term
+aux<- 1:length(dat$term)
+x<- rep(list(diag(2)), 2677)
+for (i in 1:length(aux)){
+  x[[i]][1,1]<-dat$high[[i]]
+  x[[i]][2,1]<-dat$low[[i]]
+  x[[i]][1,2]<-colSums(dat[,c(2,3)])[1]-dat$high[[i]]
+  x[[i]][2,2]<-colSums(dat[,c(2,3)])[2]-dat$low[[i]]
+  colnames(x[[i]])<- c(dat$term[i], paste0("\u00ac",dat$term[i]))
+  rownames(x[[i]])<- c("high", "low")
+}
+
+#one example
+x[[2010]]
+```
+This table shows the frequency of "right" term is 146 in the high performance group, and another type is 26350. In the low performance group, the frequency is 76. The ratio below this term for these two groups are 146/76=1.92
+
+Now we would like to explore all terms ratio between high preformance groups and low preformance groups
+```{r}
+ratio<- matrix(NA,nrow=2677,ncol=2)
+for (i in 1:length(x)){
+  ratio[i,1]<- colnames(x[[i]])[1]
+  ratio[i,2]<- x[[i]][1,1]/(x[[i]][2,1]+1)#add 0.01 here to avoid infinite value
+}
+```
+
+Look at the distribution of ratio 
+```{r}
+hist(as.numeric(ratio[,2]))
+
+Ordered_Ratio<- ratio[order(as.numeric(ratio[,2]), decreasing=TRUE),]
+head(Ordered_Ratio)
+
+#check the case "pi"
+x[[1815]]
+
+```
+
+
+Here are the rates between the term and the rest of terms
+
+Rates=High/low
+
+```{r}
+rates<- matrix(NA, nrow = 2677, ncol = 2)
+for (i in 1:length(x)){
+  rates[i,1]<-colnames(x[[i]])[1]
+  rates[i,2]<- x[[i]][1,1]/(x[[i]][2,1]+1)
+}
+```
+
+look at the rates distribution
+
+```{r}
+hist(as.numeric(rates[,2]))
+Ordered_Rates<- rates[order(as.numeric(rates[,2]), decreasing=TRUE),]
+head(Ordered_Rates)
+```
+
+
+Try the log ration per the gender lesson
+```{r}
+log_rates<- matrix(NA, nrow = 2677, ncol = 2)
+for (i in 1:length(x)){
+  log_rates[i,1]<-colnames(x[[i]])[1]
+  log_rates[i,2]<- log2(x[[i]][1,1]+0.1)/log(x[[i]][2,1]+0.1)
+}
+
+
+```
+
+
+
+
+
+
+Some terms only apprear once in the dataset. This could be unreliable and not very informative. So we discard them
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+

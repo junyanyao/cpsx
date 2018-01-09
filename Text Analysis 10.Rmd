@@ -1,0 +1,146 @@
+---
+title: "Text analysis 10"
+author: "Junyan Yao"
+date: "12/17/2017"
+output: html_document
+---
+```{r}
+library(corpus)
+library(Matrix)
+library(tidytext)
+library(ggplot2)
+library(dplyr)
+library(qdap)
+
+setwd("/Users/YaoJunyan/Documents/Text-Analysis")
+data<-read.csv("~/Documents/NYU/Fall 2017/Text Analysis Project/cpsv_text_project/chat_time_series.csv")
+#data<- read.csv("C:/Users/jyao/Documents/Text Analysis/chat_time_series.csv") office comp
+data<- data[,c(2,5,8)] #extract needed columns
+
+
+#subset the data
+chatdata<- data[which(data$type=="chat"),] #this is what we want to look at for now
+problemdata<- data[which(data$type=="problem"),]
+
+
+#load the outcome data
+outcomedata<-read.csv("~/Documents/NYU/Fall 2017/Text Analysis Project/cpsv_text_project/group_outcomes.csv")
+#outcomedata<-read.csv("C:/Users/jyao/Documents/Text Analysis/group_outcomes.csv") #office comp
+
+cwords <- read_excel("~/Desktop/Text-Analysis/cwords.xlsx")
+
+
+subset1<- outcomedata[outcomedata$group_id>0,] #Get rid of all negative group_id
+summary(subset1$delta) #we have 110 groups in this dataset
+
+
+performance<-ifelse(subset1$delta>0.4058,"high",ifelse(subset1$delta< -0.481,"low","in-between")) 
+temp22<-cbind(subset1,performance) #label the performance for these groups
+
+#try to get rid of the missing rows(some group id are missing in the outcome data)
+merged_data<- merge(x=chatdata,y=temp22,by="group_id")
+
+merged_data$text<-as.character(merged_data$content)
+
+
+ques<-read.csv("problem/df3.csv")
+
+#remove NA
+ques<-ques[1:113,1:2]
+
+```
+
+```{r}
+
+que2<-term_stats(ques$question, drop=stopwords_en, drop_punct=TRUE) 
+
+#drop  <p>
+que2<- que2[which(que2$term !=">"),]
+que2<- que2[which(que2$term !="<"),]
+que2<- que2[which(que2$term !="p"),]
+
+Y<- term_stats(chatdata$content, drop=stopwords_en, drop_punct=TRUE)
+```
+
+
+Join the question lists to the chat list
+```{r}
+D<- rbind(Y, que2)
+```
+
+```{r}
+
+subset1<- outcomedata[outcomedata$group_id>0,] #Get rid of all negative group_id
+
+performance<-ifelse(subset1$delta>0.4058,"high",ifelse(subset1$delta< -0.481,"low","in-between")) 
+temp22<-cbind(subset1,performance)
+
+#try to get rid of the missing rows(some group id are missing in the outcome data)
+merged_data<- merge(x=chatdata,y=temp22,by="group_id")
+
+merged_data$text<-as.character(merged_data$content)
+
+```
+
+
+low frequency words appeared in questions
+```{r}
+que3<- que2[which(que2$count< 3),]
+```
+
+Grammar/Typo correction
+
+```{r}
+
+cwords <- read_excel("~/Desktop/Text-Analysis/cwords.xlsx")
+dim(cwords)
+names(cwords)<-c("original","term")
+
+wordz<- cwords %>% left_join(que3, by=c("term","term"))
+
+wordz$Q<- wordz$term
+
+wordz$Q[which(wordz$count>=1)]<- "Qword"
+
+
+#remove NA's and duplicates
+wordz<-wordz[!is.na(wordz$Q),]
+wordz<- wordz[!duplicated(wordz$term),]
+```
+
+Replace all the Qword and correct the grammar in the corpus
+
+#don't run, not working
+```{r}
+merged_data$sentences<- mgsub(wordz$original,wordz$Q, merged_data$content, leadspace = TRUE, trailspace = TRUE)
+T<- vector("list", 14007)
+
+for (i in 1: (length(merged_data$content))){
+  T[[i]]<-term_stats(merged_data$content[i])
+}
+
+for (i in 1:(length(merged_data$content))){
+  T[[i]][1]<- mgsub(wordz$original,wordz$Q, T[[i]][1])
+}
+
+```
+
+```{r}
+
+TermByGroup<- merged_data %>%
+  unnest_tokens(word, text) %>%
+  count(group_id,word, sort = TRUE) %>%
+  ungroup()
+
+
+tot<- TermByGroup %>%
+  group_by(group_id) %>%
+  summarize(total=sum(n))
+
+TermByGroup<- left_join(TermByGroup, tot)
+
+TermByGroup<- TermByGroup %>%
+  bind_tf_idf(word,group_id, n)
+View(TermByGroup) 
+```
+
