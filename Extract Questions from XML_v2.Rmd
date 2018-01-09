@@ -1,0 +1,106 @@
+---
+title: "Text Analysis 10"
+author: "Junyan Yao"
+date: "12/17/2017"
+output: html_document
+---
+
+```{r}
+library(XML)
+library(xml2)
+```
+
+
+
+```{r}
+setwd("/Users/YaoJunyan/Documents/Text-Analysis/problem")
+
+temp <- list.files() #121 files in total
+myfiles<- lapply (temp, xmlParse)
+
+myfiles[[1]]
+
+readfiles<- lapply (temp, read_xml)
+
+readfiles[1]
+
+```
+
+#get the elements for each xml file
+```{r}
+dat_children<- list()
+
+for (i in 1:length(myfiles)){
+  dat_children[[i]]<- xml_children(readfiles[[i]])
+}
+
+```
+
+#convert to a character vector for each file
+```{r}
+dat_text<- lapply(dat_children,xml_text)
+```
+#extract the pattern
+
+Some problems have images inserted. Some are not;
+When they insert the image, the problem questions is the second line;
+If they don't have image inserted, the first line is the question
+
+```{r}
+
+#drop instructional files
+dat_text<- dat_text[-122]
+dat_text<- dat_text[-121]
+dat_text<- dat_text[-120]
+
+feature1<- list()
+for (i in 1: length(dat_text)){
+  feature1[[i]]<- grepl("check-label", dat_text[[i]])
+}
+
+
+feature2<- list()
+for (i in 1: length(dat_text)){
+  feature2[[i]]<- grepl("answer_ids", dat_text[[i]])
+}
+
+
+#now unlist all the list vectors
+
+new_text<-unlist(dat_text)
+new_feature1<- unlist(feature1)
+new_feature2<- unlist(feature2)
+
+```
+
+
+remove certain features
+```{r}
+no_feature1<- new_text[!new_feature1]
+
+no_feature2<- new_text[!new_feature2]
+
+```
+
+
+##############alternative ways
+
+
+```{r}
+
+dat_text<- dat_text[-122]
+dat_text<- dat_text[-121]
+dat_text<- dat_text[-120]
+
+new_text<- unlist(dat_text)
+
+fea1<- new_text[new_text %in% grepl("answer_ids", new_text)]
+
+temp1<- grepl("answer_ids", new_text)
+no_featur1<- new_text[!temp1]
+
+temp2<- grepl("check-label", no_featur1)
+no_featur2<- no_featur1[!temp2]
+
+head(no_featur2,40)
+```
