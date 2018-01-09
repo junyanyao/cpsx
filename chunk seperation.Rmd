@@ -1,0 +1,58 @@
+---
+title: "Chunk Seperation"
+author: "Junyan Yao"
+date: "1/6/2018"
+output: html_document
+---
+
+Load data
+```{r}
+dat<-read.csv("~/Documents/NYU/Fall 2017/Text Analysis Project/cpsv_text_project/chat_time_series.csv")
+
+dat$obs <- seq.int(nrow(dat))
+
+dat<-dat[,-1]
+```
+
+seperate question discussion chunks. I am thinking to seperate the chunk by the second module number.
+
+use one group for test
+```{r}
+group2<- dat[dat$group_id==2,]
+try2<- split(group2, group2$module)
+grp2_module<- unique(group2$module)
+grp2_module<- as.character(grp2_module)
+grp2_module<-grp2_module[which(grp2_module != "NA")] #exclude NA
+
+
+obsn<- group2$obs[which(group2$module==grp2_module[4])]
+dat[obsn[1]:obsn[2],]
+
+#try to obtain the module questions observation numbers for each module
+obsnn<- list()
+for (i in (1:length(grp2_module))){
+ obsnn[[i]]<- group2$obs[which(group2$module==grp2_module[i])] 
+}
+
+#I only need the second obsnn
+
+for (i in 1: length(obsnn)){
+  if (length(obsnn[[i]])==2) {
+    obsnnn[i]<- obsnn[[i]][2]
+  } else {
+    obsnnn[i]<- obsnn[[i]][1]
+  }
+}
+
+
+
+#seperate the chunk using obsnn
+ck<- list()
+for (i in (1: length(obsnnn))) {
+  ck[i]<- dat[86: obsnnn[i],]
+}
+
+
+```
+
+
