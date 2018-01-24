@@ -1,0 +1,86 @@
+---
+title: "Text Analysis 10"
+author: "Junyan Yao"
+date: "12/17/2017"
+output: html_document
+---
+
+```{r}
+library(XML)
+library(xml2)
+```
+
+```{r}
+setwd("/Users/YaoJunyan/Documents/Text-Analysis/problem")
+
+temp <- list.files()
+myfiles<- lapply (temp, xmlParse)
+
+myfiles[[1]]
+
+readfiles= lapply (temp, read_xml)
+
+readfiles[1]
+
+```
+
+extract the pattern
+
+
+Some problems have images inserted. Some are not;
+When they insert the image, the problem questions is the second line;
+If they don't have image inserted, the first line is the question
+
+```{r}
+img<-rep(NA,122)
+for( i in 1:length(myfiles)){
+  img[i]<- grepl("img", readfiles[[i]])
+}
+
+
+scriptype<-rep(NA,122)
+
+for( i in 1:length(myfiles)){
+  scriptype[i]<- grepl("system_path", readfiles[[i]])
+}
+
+```
+
+Get the questions content for these questions without images
+
+```{r}
+xml_children((readfiles[[1]]))[2]
+xml_children((readfiles[[3]]))[2]
+xml_children((readfiles[[7]]))[2]
+```
+get the content for all questions
+```{r}
+for (i in 1:length(readfiles)){
+  if (img[i]==TRUE){
+    c[i]<- xml_children((readfiles[[i]]))[2]
+  }
+  else{
+    c[i]<-xml_children((readfiles[[i]]))[1]
+  }
+}
+
+
+#second try
+d<-rep(NA,122)
+for (i in 1:length(readfiles)){
+  if (img[i]==TRUE){
+    d[i]<- xml_children((readfiles[[i]]))[3]
+  }
+  else{
+    d[i]<-xml_children((readfiles[[i]]))[2]
+  }
+}
+
+
+
+df<-data.frame(question1=(as.character(c)))
+df2<-data.frame(question2=(as.character(d)))
+
+
+```
+
