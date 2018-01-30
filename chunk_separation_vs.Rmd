@@ -1,0 +1,97 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+Load data
+```{r}
+dat<-read.csv("~/Documents/NYU/Fall 2017/Text Analysis Project/cpsv_text_project/chat_time_series.csv")
+
+dat$obs <- seq.int(nrow(dat))
+
+dat<-dat[,-1]
+```
+
+Seperate the chunk for all groups
+```{r}
+#create new dataset where I am going to add one more column called "chunk ID"
+#wchunk<- matrix(NA, nrow = 21829, ncol = 9)
+
+obsnn<- rep(NA,21829)
+#dat_obsnn<- matrix(NA, nrow=21829, ncol = 2)
+
+
+dat$chunk_id<- NA
+
+#not run
+for (i in 1: length(unique(dat$group_id))){
+  for (j in (1: length(dat$obs))){
+    dat_obsnn[i,1]<-
+    dat_obsnn[j,2]<- seq.int(nrow(dat))
+  }
+}
+
+
+for (i in (1:length(dat$obs))){
+ dat_obsnn[i]<- dat$obs[which(group2$module==grp2_module[i])] 
+}
+
+for (i in 1: length(unique(dat$group_id))){
+    dat$obsnn[i]<-seq.int(unique(dat$group_id)[i]==dat$group_id)
+}
+
+#not run end
+
+temp<-list()
+dat$module_id<- NA
+
+grp<- unique(dat$group_id)
+for (i in 1: length(grp)){
+    temp[[i]]<-seq.int(which(dat$group_id==grp[i]))
+}
+temp_list<- unlist(temp)
+
+dat$obs_grp<- temp_list
+
+dat_obsnn<- matrix(NA, nrow=21829, ncol=9)
+
+dat_obsnn[,1]<- dat$group_id
+dat_obsnn[,2]<- dat$module
+dat_obsnn[,3]<- dat$obs_grp
+dat_obsnn[,4]<- dat$user_id
+dat_obsnn[,5]<-dat$content
+dat_obsnn[,6]<-dat$correct
+
+temp2<- dat_obsnn[,2]
+
+dat$obsnn<- temp2
+
+print(dat$obsnn[which(dat$obsnn != "NA" & dat$group_id==1)])
+
+#not run
+
+#for (i in (1: nrow(dat))){
+#  for (j in (1: length(grp))) {
+#    idx[j]<- dat$obsnn[which(dat$obsnn != "NA" & dat$group_id==j)]
+#      if(duplicated(idx[j] |duplicated(idx[j]),fromLast = TRUE)==TRUE){
+#    dat$chunk_id[i]<- dat$obsnn[which(dat$obsnn != "NA" & dat$group_id==j)][2]
+#  }
+#  else {
+#    dat$chunk_id[i]<- dat$obsnn[which(dat$obsnn != "NA" & dat$group_id==j)][1]
+#  }
+#  }
+#}
+#not run end
+dat$chunk_id<- dat$obsnn
+dat$chunk_id<- na.locf(dat$chunk_id,na,rm=TRUE, fromLast = TRUE)
+
+View(dat)
+
+write.csv(dat, "chunk_seperated file.csv")
+
+
+
+
+```
+
