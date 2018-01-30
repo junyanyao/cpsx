@@ -1,0 +1,132 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+load packages
+```{r}
+require(dplyr)
+library(Matrix)
+library(corpus)
+library(tidytext)
+library(SnowballC)
+library(tm)
+```
+
+Load problem data
+```{r}
+setwd("/Users/YaoJunyan/Documents/cpsx-text analysis")
+prob_data<-read.csv("problem_data.csv",stringsAsFactors=FALSE)
+head(prob_data,10)
+```
+
+Load the chunk seperated chat data
+```{r}
+chat_data<- read.csv("chunk_seperated file.csv",stringsAsFactors=FALSE)
+head(chat_data,10)
+```
+
+merge two data file using the module name
+
+```{r}
+prob_data$module_name<- gsub(".xml","",prob_data$L1) #remove ".xml"
+
+module_name<- unique(chat_data$module)
+module_name<- module_name[!is.na(module_name)]
+chunk_id<- unique(chat_data$chunk_id)
+chunk_id<- chunk_id[!is.na(chunk_id)]
+df<- data.frame(chunk_id,module_name)
+
+prob_data<- prob_data[!is.na(prob_data$value),]
+prob_data<-aggregate(value ~ module_name , data = prob_data, toString) #concatenate all rows in one module
+
+joined_data<- left_join(chat_data,df, by=c("chunk_id","chunk_id"))
+joined_data<- left_join(joined_data,prob_data,by=c("module_name","module_name"))
+
+#create a column to combine the group id and module name, so we can tokenlize words by this index
+
+joined_data$ind<- paste0("G",joined_data$group_id,"Q",joined_data$module_name)
+
+
+```
+
+#STEMMING (don't think this looks good)
+```{r}
+#joined_data$stem_content<- wordStem(joined_data$content,language = "porter")
+```
+
+
+Tokenlize chat data by questions and group
+
+Wijk
+```{r}
+TermByGroupQuestion<- joined_data %>%
+  unnest_tokens(word, content) %>%
+  count(ind,word,sort=TRUE) %>%
+  filter(!word %in% stop_words$word) %>%  #remove stop_words
+  ungroup
+```
+
+Tokenlize question data by question id
+
+```{r}
+TermbyQuestion <- joined_data %>%
+  unnest_tokens(word, value) %>%
+  count(module_name,word, sort=TRUE) %>%
+  filter(!word %in% stop_words$word) %>%
+  ungroup
+```
+
+
+```{r, echo=FALSE}
+tot<- TermByGroupQuestion %>%
+  group_by(ind) %>%
+  summarize(total=sum(n))
+
+TermByGroupQuestion<- left_join(TermByGroupQuestion, tot)
+TermByGroupQuestion[,5] <- TermByGroupQuestion[,3]/TermByGroupQuestion[,4]
+colnames(TermByGroupQuestion) <- c(colnames(TermByGroupQuestion)[1:4],"tf")
+
+
+TermByModule<- joined_data %>%
+  unnest_tokens(word, content) %>%
+  count(module_name,word,sort=TRUE) %>%
+  filter(!word %in% stop_words$word) %>%  #remove stop_words
+  ungroup
+
+TermByGroupQuestion$module_name<- unlist(strsplit(TermByGroupQuestion$ind,"Q"))[seq(2,2*dim(TermByGroupQuestion)[1],2)]
+
+
+idf <- rep(0,dim(TermByGroupQuestion)[1])
+for (i in c(1:dim(TermByGroupQuestion)[1])){
+  # no. of documents()
+  wd <- as.character(TermByGroupQuestion[i,2])
+  md <- as.character(TermByGroupQuestion[i,6])
+  
+  ## correcting for question words
+  nd <- dim(TermByGroupQuestion[TermByGroupQuestion[,2]==wd & TermByGroupQuestion[,6]==md,])[1] + ifelse(dim(TermbyQuestion[TermbyQuestion[,1]==md & TermbyQuestion[,2]==wd,])[1] > 0,length(unique(joined_data$group_id)),0)
+  N <- dim(TermByGroupQuestion[TermByGroupQuestion[,6]==md,])[1] + ifelse(dim(TermbyQuestion[TermbyQuestion[,1]==md & TermbyQuestion[,2]==wd,])[1] > 0,length(unique(joined_data$group_id)),0)
+  
+  idf[i] <- -log(nd/N)
+}
+
+## corrected tf-idf
+TermByGroupQuestion$idf <- idf
+TermByGroupQuestion$tfidf <- TermByGroupQuestion$tf * TermByGroupQuestion$idf
+
+TermByGroupQuestion_v1<-TermByGroupQuestion[order(TermByGroupQuestion$tfidf,decreasing = TRUE),]
+
+## Remove numbers and Remove choices
+TermByGroupQuestion_v1<-TermByGroupQuestion[is.na(as.numeric(TermByGroupQuestion$word)),] 
+
+TermByGroupQuestion_v1<-TermByGroupQuestion_v1[!grepl("choice_",TermByGroupQuestion_v1$word),]
+
+#order it by the TF-IDF value
+TermByGroupQuestion_v1<-TermByGroupQuestion_v1[order(TermByGroupQuestion_v1$tfidf,decreasing = TRUE),]
+
+head(TermByGroupQuestion_v1,50)
+
+```
+
+
+
+
